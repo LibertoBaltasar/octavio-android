@@ -140,8 +140,8 @@ class OctavioWallpaperService : WallpaperService() {
 
             val bmp = bitmaps[mood]?.get(frame) ?: return
 
-            // El bicho ocupa ~40% del lado menor de la pantalla.
-            val target = (minOf(w, h) * 0.4f).toInt().coerceAtLeast(64)
+            // El bicho ocupa ~48% del lado menor de la pantalla (más grande que v1).
+            val target = (minOf(w, h) * 0.48f).toInt().coerceAtLeast(64)
             val left = (w - target) / 2f
             val top = (h - target) / 2f
             canvas.drawBitmap(

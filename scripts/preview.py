@@ -1,57 +1,23 @@
 #!/usr/bin/env python3
-"""Genera un preview del live wallpaper a resolución real del Nothing 2a (1080x2412)."""
+"""Genera un preview del live wallpaper a resolución real del Nothing 2a (1080x2412).
+
+Carga el sprite idle ya generado por gen_sprites.py (octavio_v2_idle0.png) y lo
+escala con nearest-neighbor para simular exactamente lo que verá el wallpaper.
+"""
+
 from PIL import Image, ImageDraw
 
-PAL = {
-    '.': (0, 0, 0, 0),
-    'K': (6, 6, 10, 255),
-    'B': (30, 28, 38, 255),
-    'D': (18, 16, 24, 255),
-    'Y': (255, 214, 64, 255),
-    'y': (210, 160, 20, 255),
-    'W': (255, 255, 255, 255),
-    'P': (240, 140, 155, 255),
-    'Z': (150, 200, 235, 255),
-}
-
-IDLE_0 = [
-    "....KK....KK....",
-    "...KKK....KKK...",
-    "...KPK....KPK...",
-    "...KKKKKKKKKK...",
-    "..KBBBBBBBBBBK..",
-    "..KBYYYBBYYYBK..",
-    "..KBWYYBBYYWBK..",
-    "..KBYYYBBYYYBK..",
-    "..KBYYYBBYYYBK..",
-    "..KBBBBBBBBBBK..",
-    "..KBBBPPPPBBBK..",
-    "..KBBBBBBBBBBK..",
-    "..KKKKKKKKKKKK..",
-    "...KBBBBBBBBK...",
-    "...KBBBBBBBBK...",
-    "..KKKKKKKKKKKK..",
-]
-
-def render_sprite(rows, scale):
-    h, w = len(rows), len(rows[0])
-    img = Image.new("RGBA", (w * scale, h * scale), (0, 0, 0, 0))
-    px = img.load()
-    for y, row in enumerate(rows):
-        for x, c in enumerate(row):
-            col = PAL[c]
-            for dy in range(scale):
-                for dx in range(scale):
-                    px[x * scale + dx, y * scale + dy] = col
-    return img
-
 W, H = 1080, 2412
-img = Image.new("RGBA", (W, H), (18, 18, 30, 255))
+BG = (18, 18, 30, 255)
+
+img = Image.new("RGBA", (W, H), BG)
 draw = ImageDraw.Draw(img)
 
-# Bicho centrado (~40% del lado menor = 1080*0.4)
-target = int(min(W, H) * 0.4)
-sprite = render_sprite(IDLE_0, target // 16)  # 16 px lógicos
+# Cargar sprite idle (24x24 lógico, renderizado a 14x = 336px) y escalarlo
+sprite_src = Image.open("/home/liberto/Downloads/octavio_v2_idle0.png").convert("RGBA")
+target = int(min(W, H) * 0.48)                       # ~48% del lado menor
+sprite = sprite_src.resize((target, target), Image.Resampling.NEAREST)
+
 left = (W - sprite.width) // 2
 top = (H - sprite.height) // 2
 img.paste(sprite, (left, top), sprite)
