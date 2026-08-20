@@ -127,8 +127,13 @@ class OctavioWallpaperService : WallpaperService() {
 
             val snapshot = PetSimulation.snapshot(repo.load(), ahora)
 
-            // Mood efectivo: si acabamos de tocar, muestra la cara contenta.
-            val mood = if (ahora < happyUntil) PetMood.HAPPY else snapshot.mood
+            // Mood efectivo. Prioridad:
+            //  1) Forzado manual desde la app (botones de prueba).
+            //  2) Cara contenta si acabamos de tocar.
+            //  3) Estado natural derivado del tiempo.
+            val mood = repo.moodOverride()
+                ?: if (ahora < happyUntil) PetMood.HAPPY
+                else snapshot.mood
 
             // Parpadeo: dentro de cada ciclo de 4 s, cierra los ojos 150 ms.
             val frame = if (mood == PetMood.IDLE && (ahora % 4000) < 150) 1 else 0

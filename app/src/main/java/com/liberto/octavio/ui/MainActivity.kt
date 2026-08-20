@@ -6,62 +6,103 @@ import android.content.ComponentName
 import android.content.Intent
 import android.os.Bundle
 import android.view.Gravity
+import android.view.View
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
 import com.liberto.octavio.OctavioWallpaperService
+import com.liberto.octavio.pet.PetMood
 import com.liberto.octavio.pet.PetRepository
-import com.liberto.octavio.pet.PetSimulation
 
 /**
- * Actividad principal: muestra el estado actual de Octavio y permite
- * establecerlo como fondo de pantalla. UI programática (sin appcompat/material)
- * para mantener la app mínima en la Fase 1.
+ * Actividad principal: preview en vivo de Octavio + botones para disparar cada
+ * animación. Cada botón además fuerza el mood en el wallpaper, para poder verlo
+ * también en la pantalla de bloqueo sin depender del toque (poco fiable en
+ * lock screens).
  */
 class MainActivity : Activity() {
 
+    private lateinit var petView: PetView
+    private lateinit var repo: PetRepository
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        val repo = PetRepository(this)
-        val estado = PetSimulation.snapshot(repo.load())
+        repo = PetRepository(this)
 
         val root = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
-            gravity = Gravity.CENTER
-            setPadding(48, 48, 48, 48)
+            gravity = Gravity.CENTER_HORIZONTAL
+            setPadding(32, 48, 32, 48)
         }
 
         val titulo = TextView(this).apply {
             text = "Octavio"
-            textSize = 30f
+            textSize = 28f
             gravity = Gravity.CENTER
         }
 
-        val descripcion = TextView(this).apply {
-            text = buildString {
-                append("Tu bicho vive en la pantalla de bloqueo.\n\n")
-                append("Estado: ${estado.mood}\n")
-                append("Hambre: ${estado.hambre}%\n")
-                append("Energía: ${estado.energia}%\n")
-                append("Felicidad: ${estado.felicidad}%\n\n")
-                append("Tócalo para alimentarlo; mantén pulsado para acariciarlo.")
-            }
-            textSize = 16f
-            gravity = Gravity.CENTER
-            setPadding(0, 24, 0, 24)
+        petView = PetView(this).apply {
+            layoutParams = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                dp(300),
+            )
         }
 
-        val boton = Button(this).apply {
-            text = "Establecer como fondo de pantalla"
-            setOnClickListener { abrirSelectorWallpaper() }
+        val instrucciones = TextView(this).apply {
+            text = "Pulsa un estado para ver su animación en directo.\nEl mismo estado se aplica al fondo de pantalla."
+            textSize = 14f
+            gravity = Gravity.CENTER
+            setPadding(0, 12, 0, 12)
         }
 
         root.addView(titulo)
-        root.addView(descripcion)
-        root.addView(boton)
+        root.addView(petView)
+        root.addView(instrucciones)
+        root.addView(filaMoods())
+        root.addView(botonNatural())
+        root.addView(botonWallpaper())
+
         setContentView(root)
     }
+
+    /** Fila de botones: uno por cada estado de ánimo. */
+    private fun filaMoods(): View {
+        val fila = LinearLayout(this).apply {
+            orientation = LinearLayout.HORIZONTAL
+            gravity = Gravity.CENTER
+        }
+        fila.addView(botonMood("Idle", PetMood.IDLE))
+        fila.addView(botonMood("Contento", PetMood.HAPPY))
+        fila.addView(botonMood("Hambre", PetMood.HUNGRY))
+        fila.addView(botonMood("Dormido", PetMood.SLEEP))
+        return fila
+    }
+
+    /** Botón de estado: cambia el preview Y fuerza el mood en el wallpaper. */
+    private fun botonMood(texto: String, mood: PetMood): Button =
+        Button(this).apply {
+            text = texto
+            setOnClickListener {
+                petView.setMood(mood)
+                repo.setMoodOverride(mood)
+            }
+        }
+
+    /** Vuelve al estado natural (derivado del tiempo) y quita el forzado. */
+    private fun botonNatural(): Button =
+        Button(this).apply {
+            text = "Estado natural (según el tiempo)"
+            setOnClickListener {
+                repo.setMoodOverride(null)
+                petView.setMood(PetMood.IDLE)
+            }
+        }
+
+    private fun botonWallpaper(): Button =
+        Button(this).apply {
+            text = "Establecer como fondo de pantalla"
+            setOnClickListener { abrirSelectorWallpaper() }
+        }
 
     /** Abre el selector de live wallpapers apuntando directamente a Octavio. */
     private fun abrirSelectorWallpaper() {
@@ -73,4 +114,6 @@ class MainActivity : Activity() {
         }
         startActivity(intent)
     }
+
+    private fun dp(v: Int): Int = (v * resources.displayMetrics.density + 0.5f).toInt()
 }
