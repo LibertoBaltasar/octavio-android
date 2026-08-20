@@ -1,0 +1,10 @@
+[
+    {
+        "merged": "com.liberto.octavio.app-debug-12:/drawable_ic_launcher.xml.flat",
+        "source": "com.liberto.octavio.app-main-14:/drawable/ic_launcher.xml"
+    },
+    {
+        "merged": "com.liberto.octavio.app-debug-12:/xml_wallpaper.xml.flat",
+        "source": "com.liberto.octavio.app-main-14:/xml/wallpaper.xml"
+    }
+]

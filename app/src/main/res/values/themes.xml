@@ -1,0 +1,6 @@
+<resources>
+    <!-- Tema nativo (sin appcompat/material): fondo oscuro, sin action bar -->
+    <style name="Theme.Octavio" parent="android:Theme.Material.NoActionBar">
+        <item name="android:windowBackground">#12121E</item>
+    </style>
+</resources>

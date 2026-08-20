@@ -1,0 +1,7 @@
+R_DEF: Internal format may change without notice
+local
+drawable ic_launcher
+string app_name
+string wallpaper_name
+style Theme.Octavio
+xml wallpaper

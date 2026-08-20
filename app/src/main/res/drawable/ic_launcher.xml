@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Icono de Octavio: gato negro pixel-art (simplificado como vector) -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="48dp"
+    android:height="48dp"
+    android:viewportWidth="48"
+    android:viewportHeight="48">
+    <!-- fondo -->
+    <path android:fillColor="#141422" android:pathData="M0,0h48v48h-48z" />
+    <!-- orejas -->
+    <path android:fillColor="#1E1C26" android:pathData="M9,20 L13,5 L22,17 Z" />
+    <path android:fillColor="#1E1C26" android:pathData="M39,20 L35,5 L26,17 Z" />
+    <!-- cabeza -->
+    <path android:fillColor="#1E1C26" android:pathData="M9,17h30v21h-30z" />
+    <!-- ojos amarillos -->
+    <path android:fillColor="#FFD640" android:pathData="M15,24h7v7h-7z" />
+    <path android:fillColor="#FFD640" android:pathData="M26,24h7v7h-7z" />
+    <!-- brillo en los ojos -->
+    <path android:fillColor="#FFFFFF" android:pathData="M16,25h2.5v2.5h-2.5z" />
+    <path android:fillColor="#FFFFFF" android:pathData="M27,25h2.5v2.5h-2.5z" />
+    <!-- nariz/boca rosa -->
+    <path android:fillColor="#F08C9B" android:pathData="M22,31h4v2h-4z" />
+</vector>
